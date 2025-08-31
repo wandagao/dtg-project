@@ -25,7 +25,7 @@ jobs:
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v2
 
-    - name: Verify authentication and test permissions
+    - name: Test authentication and permissions
       run: |
         echo "=== 认证状态 ==="
         gcloud auth list --filter=status:ACTIVE --format="value(account)"
@@ -33,10 +33,10 @@ jobs:
         echo "=== 当前项目 ==="
         gcloud config get-value project
         
-        echo "=== 测试项目访问权限 ==="
-        gcloud projects describe xxpay-123456 --format="value(name,projectId,projectNumber)"
+        echo "=== 测试Compute权限 ==="
+        gcloud compute zones list --limit=5
         
-        echo "=== 测试服务账号权限 ==="
-        gcloud iam service-accounts list --filter="email:xxpay-terraform*"
+        echo "=== 测试Storage权限 ==="
+        gcloud storage buckets list --limit=5
         
-        echo "=== 成功！GitHub Actions 可以访问 Google Cloud ==="
+        echo "=== WIF认证完全成功！ ==="
