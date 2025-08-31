@@ -1,0 +1,42 @@
+name: Test GCP Authentication
+on:
+  workflow_dispatch:  # 允许手动触发
+  push:
+    branches: [ main ]
+
+jobs:
+  test-gcp-connection:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write  # 必需，用于OIDC认证
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Authenticate to Google Cloud
+      id: auth
+      uses: google-github-actions/auth@v2
+      with:
+        workload_identity_provider: 'projects/407283691040/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
+        service_account: 'xxpay-terraform@xxpay-123456.iam.gserviceaccount.com'
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v2
+
+    - name: Verify authentication and test permissions
+      run: |
+        echo "=== 认证状态 ==="
+        gcloud auth list --filter=status:ACTIVE --format="value(account)"
+        
+        echo "=== 当前项目 ==="
+        gcloud config get-value project
+        
+        echo "=== 测试项目访问权限 ==="
+        gcloud projects describe xxpay-123456 --format="value(name,projectId,projectNumber)"
+        
+        echo "=== 测试服务账号权限 ==="
+        gcloud iam service-accounts list --filter="email:xxpay-terraform*"
+        
+        echo "=== 成功！GitHub Actions 可以访问 Google Cloud ==="
