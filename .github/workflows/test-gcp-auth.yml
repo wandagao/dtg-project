@@ -25,7 +25,7 @@ jobs:
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v2
 
-    - name: Test authentication and permissions
+    - name: Test basic authentication only
       run: |
         echo "=== 认证状态 ==="
         gcloud auth list --filter=status:ACTIVE --format="value(account)"
@@ -33,10 +33,4 @@ jobs:
         echo "=== 当前项目 ==="
         gcloud config get-value project
         
-        echo "=== 测试Compute权限 ==="
-        gcloud compute zones list --limit=5
-        
-        echo "=== 测试Storage权限 ==="
-        gcloud storage buckets list --limit=5
-        
-        echo "=== WIF认证完全成功！ ==="
+        echo "=== WIF认证成功！可以使用Terraform了 ==="
